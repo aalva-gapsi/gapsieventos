@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/templates/basicTemplate.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+		<script>
+			function next() {
+				console.log('next')
+				PF('wizard').next();
+			}
+
+			function back() {
+				PF('wizard').back();
+			}
+			function start() {
+				PF('statusDialog').show();
+			}
+			function stop() {
+				PF('statusDialog').hide();
+			}
+
+			function closeIFrame(){
+			     //$('#youriframeid').remove();
+			     setTimeout( closeIFrameTime,500);
+			}
+			function closeIFrameTime(){
+			     //$('#youriframeid').remove();
+			     PF('uploader').hide();
+			}
+		</script>
+	</ui:define>
+	<ui:define name="content">
+		<center>
+
+			<p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+			<p:panel id="panel" header="Información del Evento" style="margin-bottom:10px;">
+				<h:panelGrid columns="2" cellpadding="5">
+				<p:outputLabel for="id" value="Id:" />
+				<p:inputText id="id" value="#{eventView.evento.id}" required="true" label="Id" disabled="true"/>
+					
+				<p:outputLabel for="nombre" value="Nombre:" />
+				<p:inputText id="nombre" value="#{eventView.evento.nombre}" required="true" label="Nombre" disabled="true"/>
+				
+				<p:outputLabel for="descripcion" value="Descripción:" />
+				<p:inputText id="descripcion" value="#{eventView.evento.descripcion}" required="true" label="Descripcion" disabled="true"/>
+				
+				<p:outputLabel for="totalAsientos" value="Total Asientos:" />
+				<p:inputText id="totalAsientos" value="#{eventView.evento.totalAsientos}" required="true" label="Total Asientos" disabled="true"/>								
+
+				<p:outputLabel for="nota" value="Nota:" />
+				<p:inputTextarea id="nota" value="Todos los Visitantes se asociarian a este evento de manera automática." disabled="true"></p:inputTextarea>
+				</h:panelGrid>
+			</p:panel>								
+
+		</center>
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

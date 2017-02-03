@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf14861634211240" configfile="/gapsieventos/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="index.xhtml" x="122" y="178" id="pf14861634497181" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" outlinks="pf14861634497182 pf14861634497183" inlinks="pf14861634497182 pf14861634497183" path="/index.xhtml"/>
+  <links id="pf14861634497182" target="pf14861634497181" source="pf14861634497181" outcome="success" fromaction="#{dummyCalcController.add}">
+    <bendPoints d1Height="-36" d2Height="-36"/>
+    <bendPoints d1Width="-64" d1Height="-36" d2Width="-64" d2Height="-36"/>
+    <bendPoints d1Width="-64" d2Width="-64"/>
+  </links>
+  <links id="pf14861634497183" target="pf14861634497181" source="pf14861634497181" outcome="success" fromaction="#{dummyCalcController.subtract}">
+    <bendPoints d1Height="-66" d2Height="-66"/>
+    <bendPoints d1Width="-94" d1Height="-66" d2Width="-94" d2Height="-66"/>
+    <bendPoints d1Width="-94" d2Width="-94"/>
+  </links>
+</pageflow:Pageflow>

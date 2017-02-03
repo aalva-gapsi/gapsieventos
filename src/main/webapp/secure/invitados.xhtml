@@ -1,0 +1,416 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/WEB-INF/templates/basicTemplate.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+	</ui:define>
+	<ui:define name="content">
+
+		<style>
+
+			#mainDivCenter {
+				height: 200px;
+				width: 400px;
+				position: fixed;
+				top: 50%;
+				left: 40%;
+				margin-top: -100px;
+				margin-left: -200px;
+			}
+
+			.ui-icon-seat {
+            	background: url("../images/seat_icon.png")  no-repeat top left !important;;
+			}
+
+			.ui-icon-mail {
+            	background: url("../images/mail_icon.png")  no-repeat top left !important;;
+			}
+
+			.ui-column-title{
+    			font-size: 14px;
+			}.ui-datatable-data, .ui-column-filter{
+    			font-size: 12px;
+			}
+
+			#mainForm {
+				top:-20px;
+				position:relative;
+			}
+			
+			.subtitle {
+				color:#E10098;
+				font-size:20px;
+			}
+
+</style>
+
+		<div style="padding-left: 30px;">
+			<h:panelGrid columns="3" cellpadding="5" width="500">
+				<p:outputLabel for="evento" class="subtitle" value="Evento:"/>
+				<p:selectOneMenu id="evento" value="#{sessionView.idEvento}"  style="width:250px">
+					<p:ajax listener="#{guestView.selectEvento}" oncomplete="filterEvento();" update="idExportar"/>
+					<f:selectItem itemLabel="TODOS" itemValue="0" noSelectionOption="true"/>
+					<f:selectItems value="#{eventView.eventos}"
+						var="evento" itemLabel="#{evento.nombre}"
+						itemValue="#{evento.id}" />
+				</p:selectOneMenu>
+				<p:commandButton id="idExportar" value="Exportar" action="#{guestView.getReportData}" ajax="false" disabled="#{sessionView.idEvento == 0}"/>
+				<!-- h:commandLink>
+					<p:button value="Exportar"/>
+					<p:dataExporter type="xls" target="invitadoDT" fileName="invitados" postProcessor="#{guestView.postProcessXLS}"/>
+				</h:commandLink -->
+			</h:panelGrid>
+		</div>
+
+		<center>
+
+			<div style="padding-left: 30px;padding-right: 30px;padding-top: 0">
+				<p:growl id="growl" widgetVar="growlWV" sticky="false" showDetail="true" life="3000" />
+				<!-- 				<p:inputText id="search" value="#{search}" style="width:100%" /> -->
+
+
+				<p:dataTable id="invitadoDT" var="invitado"  
+					value="#{guestView.invitados}" widgetVar="invitadoDT" rowIndexVar="rowIndex" rows="10"
+					paginator="true" editable="true" style="margin-bottom:20px"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					emptyMessage="No se encontraron invitados"
+					>
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Buscar:" />
+							<p:inputText id="globalFilter" onkeyup="filter(this);"
+								style="width:250px" placeholder="Criterio" />
+						</p:outputPanel>
+						<div align="left">
+							<!-- 							<p:commandButton value="+" type="button" onclick="PF('addInvitado').show();" /> -->
+						</div>
+					</f:facet>
+
+					<f:facet name="{Exporters}">
+            			<h:commandLink>
+                			<p:graphicImage name="/resources/images/excel.png" width="24"/>
+                			<p:dataExporter type="xls" target="invitadoDT" fileName="Invitados" />
+            			</h:commandLink>
+ 			       </f:facet>
+
+					<p:ajax event="rowEdit" listener="#{guestView.onRowEdit}"
+						update=":mainForm:growl" />
+					<p:ajax event="rowEditCancel" listener="#{guestView.onRowCancel}"
+						update=":mainForm:growl" />
+
+					<p:column headerText="Id" style="width: 20px" visible="false">
+						<h:outputText value="#{invitado.id}" />
+					</p:column>
+
+					<p:column headerText="Nombre" style="width: 90px"
+						filterBy="#{invitado.nombre}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{invitado.nombre}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="nombreInput" value="#{invitado.nombre}"
+									style="width:100%" required="true" requiredMessage="El campo Nombre es requerido"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="Ap Paterno" style="width: 90px"
+						filterBy="#{invitado.apPaterno}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{invitado.apPaterno}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="apPaternoInput" value="#{invitado.apPaterno}"
+									style="width:100%" required="true" requiredMessage="El campo Ap Paterno es requerido"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="Ap Materno" style="width: 90px"
+						filterBy="#{invitado.apMaterno}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{invitado.apMaterno}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="apMaternoInput" value="#{invitado.apMaterno}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Email" style="width:200px"
+						filterBy="#{invitado.email}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{invitado.email}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="emailInput" value="#{invitado.email}"
+									style="width:100%" required="true" requiredMessage="El campo Email es requerido"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Tipo" style="width:80px"
+						filterBy="#{invitado.tipoInvitado.nombre}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{invitado.tipoInvitado.nombre}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:selectOneMenu id="tipoInvitadoInput"
+									value="#{invitado.tipoInvitado.id}"
+									converter="#{tipoInvitadoConverter}" style="width: 100%" onchange="changeFieldEmpresa(#{rowIndex});">
+									<f:selectItems value="#{guestView.tipoInvitados}"
+										var="tipoInvitado" itemLabel="#{tipoInvitado.nombre}"
+										itemValue="#{tipoInvitado.id}" />
+										<!-- p:ajax update="empresaCellEditor" / -->
+								</p:selectOneMenu>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+<!--  required="#{guestView.isCheckProveedor(invitado)}" -->
+<!--  rendered="#{guestView.isCheckProveedor(invitado)}" -->
+
+					<p:column headerText="Empresa" style="width: 90px"
+						filterBy="#{invitado.empresa}" filterMatchMode="contains">
+						<p:cellEditor id="empresaCellEditor" >
+							<f:facet name="output">
+								<h:outputText value="#{invitado.empresa}" />
+							</f:facet>
+							<f:facet name="input">
+
+								<p:inputText id="empresaInput" value="#{invitado.empresa}" style="width:100%;display: #{invitado.tipoInvitado.id eq 4 ? 'block' : 'none'};" requiredMessage="El campo Empresa es requerido"/>
+								
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Invitador" style="width:100px"
+						filterBy="#{invitado.invitador}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{invitado.invitador}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="invitadorInput" value="#{invitado.invitador}" required="true"
+									requiredMessage="El campo Invitador es requerido"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<c:if test="#{sessionView.idEvento != 0}">
+						<p:column headerText="Estatus" style="width:70px"
+							filterBy="#{invitado.eventoInvitado.estatus}"
+							filterMatchMode="contains">
+							
+							<h:outputText value="#{invitado.eventoInvitado.estatus}" />
+						
+						</p:column>
+					</c:if>
+
+					<!-- p:column headerText="Estatus" style="width:70px"
+						filterBy="#{invitado.eventoInvitado.estatus}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{invitado.eventoInvitado.estatus}" />
+					</p:column -->
+						<!-- 					     <f:facet name="filter"> -->
+						<!-- 			                <p:selectCheckboxMenu label="Estatus" onchange="PF('invitadoDT').filter()" panelStyle="width:70px" scrollHeight="100"> -->
+						<!-- 			                      <f:selectItem itemValue="ASIGNADO" /> -->
+						<!-- 			                      <f:selectItem itemValue="LIBRE" /> -->
+						<!-- 			                      <f:selectItem itemValue="OCUPADO" /> -->
+						<!-- 			                </p:selectCheckboxMenu> -->
+						<!-- 			            </f:facet> -->
+
+
+
+
+					<p:column style="width:40px" headerText="Editar">
+						<p:rowEditor />
+					</p:column>
+
+					<c:if test="#{sessionView.idEvento != 0}">
+						<p:column style="width:50px" headerText="Asientos">
+						
+							
+							<p:commandButton outcome="asignacion.xhtml" value=""  style="height: 22px"
+								icon="fa fa-fw fa-clipboard" title="Asignar Lugares" update=":mainForm:growl" ajax="true"
+								actionListener="#{guestView.asignarLugares(invitado.id, sessionView.idEvento, guestView.page.id)}">
+							</p:commandButton>
+							
+							
+						</p:column>
+					</c:if>
+
+
+<!-- 						<p:button outcome="asignacion.xhtml" value=""  -->
+<!-- 							image="ui-icon-seat" title="Asignar Lugares"> -->
+<!-- 							<f:param name="idInvitado" value="#{invitado.id}" /> -->
+							<!--     							<h:graphicImage library="default" value="#{resource['images/seat_icon.png']}" height="20" /> -->
+<!-- 						</p:button> -->
+						
+
+
+					
+
+						<!-- 						<p:commandButton value=""  title="Enviar Invitación 1"  -->
+						<!-- 							process=":mainForm:invitadoDT" update=":mainForm:growl" -->
+						<!-- 							icon="ui-icon-mail-closed"  -->
+						<!-- 							actionListener="#{guestView.onSendEmail}" -->
+						<!-- 							 >			 -->
+						<!-- 							 <f:setPropertyActionListener target="#{guestView.id}" value="#{invitado.id}" /> -->
+						<!-- 							 <f:attribute name="idInvitado" value="#{invitado.id}" /> -->
+						<!-- 						</p:commandButton>	 -->
+
+
+						<!-- 						<p:commandButton value=""  title="Enviar Invitación 2"  -->
+						<!-- 							process=":mainForm:invitadoDT" update=":mainForm:growl" -->
+						<!-- 							icon="ui-icon-mail-closed"  -->
+						<!-- 							actionListener="#{guestView.onSendEmail}" -->
+						<!-- 							 >			 -->
+						<!-- 							 <f:setPropertyActionListener target="#{id}" value="#{invitado.id}" /> -->
+						<!-- 							 <f:attribute name="idInvitado" value="#{invitado.id}" /> -->
+						<!-- 						</p:commandButton>	 -->
+
+						<!-- 						<p:commandButton value=""  title="Enviar Invitación 3" -->
+						<!-- 							ajax="true"  icon="ui-icon-mail-closed"  -->
+						<!--     						immediate="true"  process="@this" -->
+						<!-- 							update=":mainForm:growl" -->
+						<!-- 							actionListener="#{guestView.onSendEmail}" -->
+						<!-- 							 >			 -->
+						<!-- 							<p:graphicImage library="default" value="#{resource['images/mail_icon.png']}" height="20"/> -->
+						<!-- 							 <f:setPropertyActionListener target="#{guestView.id}" value="#{invitado.id}" /> -->
+						<!-- 							 <f:attribute name="idInvitado" value="#{invitado.id}" /> -->
+						<!-- 						</p:commandButton> -->
+						<!-- 						<p:commandButton value=""  title="Enviar Invitación 4" -->
+						<!-- 							ajax="true"  icon="ui-icon-mail-closed"  -->
+						<!--     						immediate="true"  process="@this" -->
+						<!-- 							update=":mainForm:growl" -->
+						<!-- 							actionListener="#{guestView.onSendEmail}" -->
+						<!-- 							 >			 -->
+						<!-- 							 <f:setPropertyActionListener target="#{id}" value="#{invitado.id}" /> -->
+						<!-- 							 <f:attribute name="idInvitado" value="#{invitado.id}" /> -->
+						<!-- 						</p:commandButton>									 -->
+<!-- 						<p:commandButton value="" title="Enviar Invitación " ajax="true" image="ui-icon-mail" -->
+<!-- 							update=":mainForm:growl"  -->
+<!-- 							action="#{guestView.onSendEmail5(invitado.id)}"> -->
+<!-- 						</p:commandButton> -->
+
+											
+						<!-- 						<p:commandButton value=""  title="Enviar Invitación 6" -->
+						<!-- 							ajax="true"  icon="ui-icon-mail-closed"  -->
+						<!-- 							update=":mainForm:growl" -->
+						<!-- 							action="#{guestView.onSendEmail6(invitado.id)}" -->
+						<!-- 							 >			 -->
+						<!-- 							 <f:param name="idInvitado" value="#{invitado.id}" /> -->
+						<!-- 						</p:commandButton>																 -->
+						<!--  						<p:commandButton value="Ajax Submit" id="ajax" update=":mainForm:growl"  -->
+						<!--  							actionListener="#{guestView.onSendEmail}" > -->
+						<!--  							 <f:setPropertyActionListener target="#{id}" value="#{invitado.id}" /> -->
+						<!--  						</p:commandButton> -->
+
+						<!--  						<p:commandLink value="Ajax Submit" id="cc" update=":mainForm:growl"  -->
+						<!--  							actionListener="#{guestView.onSendEmail}" > -->
+						<!--  							 <f:setPropertyActionListener target="#{id}" value="#{invitado.id}" /> -->
+						<!--  						<p:graphicImage library="default" value="#{resource['images/mail_icon.png']}" height="20"/> -->
+						<!--  						</p:commandLink> -->
+
+
+					<c:if test="#{sessionView.idEvento != 0}">
+						<p:column style="width:60px" headerText="Invitación">
+							<p:commandButton value="" title="Enviar Invitación " ajax="true" style="height: 22px"
+								icon="fa fa-fw fa-envelope-o" update=":mainForm:growl"
+								actionListener="#{guestView.onSendEmail5(invitado.id, sessionView.idEvento)}">
+							</p:commandButton>
+						</p:column>
+					</c:if>
+					
+					<c:if test="#{sessionView.idEvento == 0}">
+						<p:column style="width:50px" headerText="Eventos">
+							<p:button outcome="invitado_eventos.xhtml" value=""  style="height: 22px"
+								icon="fa fa-fw fa-clipboard" title="Asignar Eventos">
+								<f:param name="idInvitado" value="#{invitado.id}" />
+							</p:button>
+						</p:column>
+					</c:if>	
+					
+				</p:dataTable>
+			</div>
+		</center>
+
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+
+		<script type="text/javascript">
+
+		function changeFieldEmpresa(rowIndex) {
+			var idTipoInvitado = 'mainForm:invitadoDT:' + rowIndex + ':tipoInvitadoInput_input';
+		    var objTipoInvitado = $(document.getElementById(idTipoInvitado));
+		    var tipoInvitado = objTipoInvitado.val();
+
+			var idEmpresa = 'mainForm:invitadoDT:' + rowIndex + ':empresaInput';
+		    var objEmpresa = $(document.getElementById(idEmpresa));
+		    var empresa = objEmpresa.val();
+		    
+		    // Si NO es Proveedor
+		    if (tipoInvitado != "4") {
+		    	objEmpresa.val('');
+		    	objEmpresa.css("display", "none");
+		    } else {
+		    	objEmpresa.css("display", "block");
+		    }
+		}
+
+        function handleRequest(xhr, status, args) {
+            stop();
+            console.log(args);
+//             if (args.validationFailed || !args.loggedIn) {
+//                 PF('dlg').jq.effect("shake", {
+//                     times : 5
+//                 }, 100);
+//             } else {
+//                 PF('dlg').hide();
+//             }
+        }
+        function start() {
+            PF('statusDialog').show();
+        }
+        function stop() {
+            PF('statusDialog').hide();
+        }
+
+	    function filter(input) {
+// 		       alert(input.value);
+	       	   if(input.value.length >=3|| input.value.length ==0 ){
+	       	   	 PF('invitadoDT').filter();
+	       	   }
+	          
+	    }
+	    
+	    function filterEvento() {
+	    	PF('invitadoDT').filter();
+	    }
+	    
+	    function messageWithoutMaps(event) {
+	    	PF('growlWV').renderMessage({"summary":"Error",
+                "detail":"El evento [" + event + "] no tiene un mapa asignado.",
+                "severity":"warn"});
+	    }
+	    
+		</script>
+
+	</ui:define>
+
+</ui:composition>

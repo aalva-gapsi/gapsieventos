@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <style>
+/*
+<!--
+body {
+    background-image: url("resources/images/logo.jpg");
+    background-repeat: no-repeat;
+    background-position: left top;
+}
+-->
+*/
+</style>
+</h:head>
+<h:body>
+    <h:form>
+        <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+        <p:dialog header="#{msg['login.title']}" widgetVar="dlg" resizable="false" visible="true" closable="false">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="username" value="#{msg['login.username']}:" />
+                <p:inputText id="username" value="#{userLoginView.username}" required="true" label="#{msg['login.username']}" />
+
+                <h:outputLabel for="password" value="#{msg['login.password']}:" />
+                <p:password id="password" value="#{userLoginView.password}" required="true" label="#{msg['login.password']}" />
+                <f:facet name="footer">
+                    <p:commandButton value="#{msg['login.submit']}" update="growl" actionListener="#{userLoginView.validateUser}"
+                        oncomplete="handleLoginRequest(xhr, status, args)" onclick="start();" />
+                </f:facet>
+            </h:panelGrid>
+        </p:dialog>
+        <p:dialog modal="true" widgetVar="statusDialog" header="#{msg['login.loading']}" draggable="false" closable="false" resizable="false">
+            <p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+        </p:dialog>
+    </h:form>
+
+    <script type="text/javascript">
+        function handleLoginRequest(xhr, status, args) {
+            stop();
+            console.log(args);
+            if (args.validationFailed || !args.loggedIn) {
+                PF('dlg').jq.effect("shake", {
+                    times : 5
+                }, 100);
+            } else {
+                PF('dlg').hide();
+            }
+        }
+        function start() {
+            PF('statusDialog').show();
+        }
+        function stop() {
+            PF('statusDialog').hide();
+        }
+    </script>
+
+</h:body>
+</html>

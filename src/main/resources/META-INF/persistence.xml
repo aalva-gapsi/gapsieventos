@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="openjpa-todo" transaction-type="RESOURCE_LOCAL">
+		<!-- The cloudAutowiring-1.0 Liberty feature will resolve this to whatever 
+			the database service name is -->
+		<!-- When running locally without this feature, create a datasource with 
+			the JNDI name "jdbc/mydbdatasource" in server.xml -->
+<!-- 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider> -->
+<!-- 		<jta-data-source>java:comp/env/jdbc/mydbdatasource</jta-data-source> -->
+		<non-jta-data-source>java:comp/env/jdbc/fashionfestmexico-postgresql</non-jta-data-source>
+		<class>example.jpa.TODO</class>
+		<class>mx.com.gapsi.eventos.model.Evento</class>
+		<class>mx.com.gapsi.eventos.model.EventoInvitado</class>
+		<class>mx.com.gapsi.eventos.model.Invitado</class>
+		<class>mx.com.gapsi.eventos.model.TipoInvitado</class>
+		<class>mx.com.gapsi.eventos.model.Usuario</class>
+		<properties>
+<!-- 		<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" /> -->
+			<!-- allow table definitions/creation on-the-fly jpa-2.0 feature -->
+			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
+			<!-- allow table definitions/creation on-the-fly jpa-2.1 feature -->
+<!-- 			<property name="eclipselink.ddl-generation" value="create-tables"/> -->
+         <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
+         <!-- property name="openjpa.Log" value="DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=TRACE"/ -->
+
+		</properties>	
+	</persistence-unit>
+	
+</persistence>

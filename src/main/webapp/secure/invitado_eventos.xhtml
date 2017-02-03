@@ -1,0 +1,257 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/WEB-INF/templates/basicTemplate.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+	</ui:define>
+	<ui:define name="content">
+
+		<style>
+#mainDivCenter {
+	height: 200px;
+	width: 400px;
+	position: fixed;
+	top: 50%;
+	left: 40%;
+	margin-top: -100px;
+	margin-left: -200px;
+}
+.ui-icon-seat {
+            background: url("../images/seat_icon.png")  no-repeat top left !important;;
+}
+.ui-icon-mail {
+            background: url("../images/mail_icon.png")  no-repeat top left !important;;
+}
+
+.ui-column-title{
+    font-size: 14px;
+}.ui-datatable-data, .ui-column-filter{
+    font-size: 12px;
+}
+
+</style>
+		<center>
+
+			<div style="padding-left: 30px;padding-right: 30px;">
+				<p:growl id="growl" widgetVar="growlWV" sticky="false" showDetail="true" life="3000" />
+				<!-- 				<p:inputText id="search" value="#{search}" style="width:100%" /> -->
+
+
+				<h:panelGrid columns="4" cellpadding="5">
+					<p:outputLabel for="invitadoNombre" value="Invitado:" />
+					<p:inputText id="invitadoNombre"
+						value="#{eventGuestView.invitado.nombreFull}"
+						label="Nombre" disabled="true" />
+
+					<p:outputLabel for="invitadoInvitador" value="Invitado Por:" />
+					<p:inputText id="invitadoInvitador"
+						value="#{eventGuestView.invitado.invitador}"
+						label="Invitado Por" disabled="true" />
+
+					<p:outputLabel for="invitadoTipoInvitado" value="Tipo Invitado:" />
+					<p:inputText id="invitadoTipoInvitado"
+						value="#{eventGuestView.invitado.tipoInvitado.nombre}"
+						label="Tipo Invitado" disabled="true" />
+
+					<c:if test="#{not empty eventGuestView.invitado.empresa}">
+						<p:outputLabel for="invitadoEmpresa" value="Empresa:" />
+						<p:inputText id="invitadoEmpresa"
+							value="#{eventGuestView.invitado.empresa}"
+							label="Empresa" disabled="true" />
+					</c:if>
+					
+					<c:if test="#{empty eventGuestView.invitado.empresa}">
+						<h:panelGrid/>
+						<h:panelGrid/>
+					</c:if>
+
+					<h:panelGrid/>
+					<h:panelGrid/>
+					<h:panelGrid/>
+					<h:panelGrid/>
+
+				    <p:outputLabel for="evento" value="Evento:" />
+					<p:selectOneMenu id="evento"
+						value="#{eventGuestView.eventoInvitado.evento.id}" style="width:230px" required="true">
+						<!--  converter="#{tipoInvitadoConverter}" style="width:250px" -->
+						<!--  <f:selectItem itemLabel="Selecciona Uno" itemValue="" noSelectionOption="true"/> -->
+						<f:selectItems value="#{eventGuestView.eventosAvailable}"
+							var="evento" itemLabel="#{evento.nombre}"
+							itemValue="#{evento.id}"/>
+							
+						<c:if test="#{empty eventGuestView.eventosAvailable}">
+							<f:selectItem itemValue=" " itemLabel="No hay más eventos" itemDisabled="true" />
+						</c:if>
+					</p:selectOneMenu>
+					
+				
+					
+					<!--  f:facet name="footer" -->
+						<p:commandButton value="Invitar a Evento"
+							actionListener="#{eventGuestView.assignEvent}" action="#{eventGuestView.resetEventGuest}"
+							oncomplete="handleRequest(xhr, status, args)" onclick="start();" update="@form" ajax="true"
+							disabled="#{empty eventGuestView.eventosAvailable}"/>
+					<!--  /f:facet -->
+
+				</h:panelGrid>
+				
+				<br />
+
+				<p:dataTable id="eventoInvitadoDT" var="eventoInvitado"  
+					value="#{eventGuestView.eventoInvitados}" widgetVar="eventoInvitadoDT" rows="10"
+					paginator="true" editable="true" style="margin-bottom:20px"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					emptyMessage="No se encontraron eventos para este invitado"
+					>
+
+					<f:facet name="header">
+						Eventos asignados al invitado: <h:outputText value="#{eventGuestView.invitado.nombreFull}" />
+					</f:facet>
+
+					<!-- f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Buscar:" />
+							<p:inputText id="globalFilter" onkeyup="filter(this);"
+								style="width:250px" placeholder="Criterio" />
+						</p:outputPanel>
+						<div align="left">
+						</div>
+					</f:facet -->
+
+					<p:ajax event="rowEdit" listener="#{eventGuestView.onRowEdit}"
+						update=":mainForm:growl" />
+					<p:ajax event="rowEditCancel" listener="#{eventGuestView.onRowCancel}"
+						update=":mainForm:growl" />
+
+					<p:column headerText="Id" style="width: 20px" visible="false">
+						<h:outputText value="#{eventoInvitado.id}" />
+					</p:column>
+
+					<p:column headerText="Evento" style="width: 90px"
+						filterBy="#{eventoInvitado.evento.nombre}" filterMatchMode="contains">
+						<h:outputText value="#{eventoInvitado.evento.nombre}" />
+					</p:column>
+
+					<p:column headerText="No Boletos" style="width: 90px"
+						filterBy="#{eventoInvitado.noBoletos}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{eventoInvitado.noBoletos}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="noBoletosInput" value="#{eventoInvitado.noBoletos}"
+									style="width:100%" required="true" requiredMessage="El campo Número de boletos es requerido"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="Asientos Asignados" style="width: 90px"
+						filterBy="#{eventoInvitado.asientosAsignados}" filterMatchMode="contains">
+						<h:outputText value="#{eventoInvitado.asientosAsignados}" />
+					</p:column>
+
+					<p:column headerText="Estatus" style="width:90px"
+						filterBy="#{eventoInvitado.estatus}" filterMatchMode="contains">
+						<h:outputText value="#{eventoInvitado.estatus}" />
+					</p:column>
+
+					<p:column style="width:40px" headerText="Editar">
+						<p:rowEditor />
+					</p:column>
+
+					<p:column headerText="Llave evento" style="width: 20px" visible="false">
+						<h:outputText value="#{eventoInvitado.evento.llaveEvento}" />
+					</p:column>
+
+					<p:column style="width:50px" headerText="Asientos">
+
+<!-- 						<p:button outcome="asignacion.xhtml" value=""  -->
+<!-- 							image="ui-icon-seat" title="Asignar Lugares"> -->
+<!-- 							<f:param name="idInvitado" value="#{invitado.id}" /> -->
+							<!--     							<h:graphicImage library="default" value="#{resource['images/seat_icon.png']}" height="20" /> -->
+<!-- 						</p:button> -->
+
+
+
+
+							<p:commandButton outcome="asignacion.xhtml" value=""  style="height: 22px"
+								icon="fa fa-fw fa-clipboard" title="Asignar Lugares" immediate="true" update=":mainForm:growl" ajax="true"
+								actionListener="#{guestView.asignarLugares(eventoInvitado.invitado.id, eventoInvitado.evento.id, eventGuestView.page.id)}">
+							</p:commandButton>
+							
+							
+
+
+						<!--  p:button outcome="asignacion.xhtml" value=""  style="height: 22px"
+							icon="fa fa-fw fa-clipboard" title="Asignar Lugares" rendered="#{not empty eventoInvitado.evento.llaveEvento}">
+							<f:param name="idInvitado" value="#{eventoInvitado.invitado.id}" />
+							<f:param name="idEvento" value="#{eventoInvitado.evento.id}" />
+							<f:param name="previousPage" value="#{eventGuestView.page}"/>
+						</p:button>
+
+
+						<p:button onclick="return messageWithoutMaps('#{eventoInvitado.evento.nombre}');" value=""  style="height: 22px"
+							icon="fa fa-fw fa-clipboard" title="Asignar Lugares" rendered="#{empty eventoInvitado.evento.llaveEvento}">
+						</p:button -->
+
+
+					</p:column>
+
+					<p:column style="width:60px" headerText="Invitación">
+						<p:commandButton value="" title="Enviar Invitación" immediate="true" ajax="true" style="height: 22px"
+							icon="fa fa-fw fa-envelope-o" update=":mainForm:growl" 
+							action="#{guestView.onSendEmail5(eventoInvitado.invitado.id, eventoInvitado.evento.id)}">
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</div>
+		</center>
+
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+
+		<script type="text/javascript">
+        function handleRequest(xhr, status, args) {
+            stop();
+            console.log(args);
+//             if (args.validationFailed || !args.loggedIn) {
+//                 PF('dlg').jq.effect("shake", {
+//                     times : 5
+//                 }, 100);
+//             } else {
+//                 PF('dlg').hide();
+//             }
+        }
+        function start() {
+            PF('statusDialog').show();
+        }
+        function stop() {
+            PF('statusDialog').hide();
+        }
+
+	    function filter(input) {
+// 		       alert(input.value);
+	       	   if(input.value.length >=3|| input.value.length ==0 ){
+	       	   	 PF('eventoInvitadoDT').filter();
+	       	   }
+	          
+	    }
+	    
+	    function messageWithoutMaps(event) {
+	    	PF('growlWV').renderMessage({"summary":"Error",
+                "detail":"El evento [" + event + "] no tiene un mapa asignado.",
+                "severity":"warn"});
+	    }
+		</script>
+
+	</ui:define>
+
+</ui:composition>

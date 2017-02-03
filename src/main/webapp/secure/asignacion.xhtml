@@ -1,0 +1,242 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/WEB-INF/templates/basicTemplate.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+		<script>
+			function next() {
+				console.log('next')
+				PF('wizard').next();
+			}
+
+			function back() {
+				PF('wizard').back();
+			}
+			function start() {
+				PF('statusDialog').show();
+			}
+			function stop() {
+				PF('statusDialog').hide();
+			}
+
+			function closeIFrame(){
+			     //$('#youriframeid').remove();
+			     setTimeout( closeIFrameTime,500);
+			}
+			function closeIFrameTime(){
+			     //$('#youriframeid').remove();
+			     PF('uploader').hide();
+			}
+			var seatsSelected = [];
+			
+			function indicateSelectedSeats(object) {
+				seatsSelected.push(object.id);
+				console.log("select seats: " + seatsSelected);
+				
+				document.getElementById('mainForm:seatsToSubmit').value = seatsSelected;
+			}
+			function removeSelectedSeats(object) {
+				var index = seatsSelected.indexOf(object.id);
+				if (index > -1) {
+				    seatsSelected.splice(index, 1);
+		                    console.log("psh: " + seatsSelected);
+				}
+				console.log("select seats: " + seatsSelected);
+				
+				document.getElementById('mainForm:seatsToSubmit').value = seatsSelected;
+				
+			}
+	        function handleRequest(xhr, status, args) {
+	            stop();
+	            if (args.validationFailed || !args.success) {
+	            } else {
+	            }
+	        }			
+		</script>
+	</ui:define>
+	<ui:define name="content">
+		<center>
+			<p:fragment autoUpdate="true">
+				<p:growl id="growl" sticky="false" showDetail="true" life="7000" />
+				<h:panelGrid columns="4" cellpadding="5">
+				
+					<p:outputLabel for="eventoNombre" value="Evento:" />
+					<p:inputText id="eventoNombre"
+						value="#{seatManagementView.eventoInvitado.evento.nombre}"
+						label="Nombre" disabled="true" />
+					<p:outputLabel for="descripcion" value="Descripción:" />
+					<p:inputText id="descripcion"
+						value="#{seatManagementView.eventoInvitado.evento.descripcion}"
+						label="Descripcion" disabled="true" />
+
+					<p:outputLabel for="totalAsientos" value="Total Asientos:" />
+					<p:inputText id="totalAsientos"
+						value="#{seatManagementView.eventoInvitado.evento.totalAsientos}"
+						label="Total Asientos" disabled="true" />
+					<p:outputLabel for="invitadoNombre" value="Invitado:" />
+					<p:inputText id="invitadoNombre"
+						value="#{seatManagementView.eventoInvitado.invitado.nombreFull}"
+						label="Invitado" disabled="true" />
+
+					<p:outputLabel for="invitadoNoBoletos" value="No Boletos:" />
+					<p:inputText id="invitadoNoBoletos"
+						value="#{seatManagementView.eventoInvitado.noBoletos}"
+						label="No Boletos" disabled="true" />
+					
+					<!-- Si NO tiene estatus OCUPADO y el evento NO tiene mapas. -->
+					<c:if test="#{seatManagementView.seatAvailable}">
+
+						<!-- SI el evento tiene Mapas SEATS.IO -->
+					  	<c:if test="#{seatManagementView.hasSeatsMaps}">
+							<p:outputLabel for="blank" value=" " />
+							<h:outputText id="blank" value=" "></h:outputText>
+
+							<h:outputLabel for="seats" value="Asientos a enviar para la baja/alta: " />
+							<p:inputTextarea id="seatsToSubmit" value="#{seatManagementView.seats}" />
+							<h:outputLabel for="seatsAllocated" value="Asientos asignados: " />
+							<h:outputLabel id="seatsAllocated" value="#{seatManagementView.seatsAllocated}" />
+
+							<p:commandButton value="Liberar Asientos"	actionListener="#{seatManagementView.releaseSeats}" oncomplete=""
+										 	disabled="#{seatManagementView.seatsAllocated=='[]'}"/>
+							<p:commandButton value="Apartar Asientos"	actionListener="#{seatManagementView.bookSeats}" />
+							<h:outputLabel value="Confirmar asistencia: "  />
+							<p:commandButton id="confirmAsistence" 	value="Ahora"	
+								oncomplete="handleRequest(xhr, status, args)" onclick="start();"
+								actionListener="#{seatManagementView.confirmSeats}" />
+
+							<h:outputLabel value="Id del asiento mostrado:" />
+							<span id="currentHoveredSeat"></span>
+						</c:if>
+						<!-- Si el evento NO tiene Mapas SEATS.IO -->
+					  	<c:if test="#{not seatManagementView.hasSeatsMaps}">
+							<p:outputLabel for="blank1" value=" " />
+							<h:outputText id="blank1" value=" "></h:outputText>
+
+							<p:outputLabel for="blank2" value=" " />
+							<h:outputText id="blank2" value=" "></h:outputText>
+							<h:outputLabel value="Confirmar asistencia: "  />
+							<p:commandButton id="confirmAsistence" 	value="Ahora"	
+								oncomplete="handleRequest(xhr, status, args)" onclick="start();"
+								actionListener="#{seatManagementView.confirmSeats}" />
+
+						</c:if>
+						
+					</c:if>
+
+					<!-- SI tiene estatus OCUPADO -->
+					<c:if test="#{not seatManagementView.seatAvailable}">
+					
+						<!-- SI el evento tiene Mapas SEATS.IO -->
+					  	<c:if test="#{seatManagementView.hasSeatsMaps}">
+							<h:outputLabel for="seatsAllocated" value="Asientos asignados: " />
+							<h:outputLabel id="seatsAllocated" value="#{seatManagementView.seatsAllocated}" />
+
+							<h:outputLabel value="Estado de asientos: " />
+							<h:outputLabel value="La invitación ya fue utilizada para ingresar." style="background-color: #ff5050;" />
+						
+							<h:outputLabel value="Id del asiento mostrado:" />
+							<span id="currentHoveredSeat"></span>
+						</c:if>
+						<!-- Si el evento NO tiene Mapas SEATS.IO -->
+					  	<c:if test="#{not seatManagementView.hasSeatsMaps}">
+					  		<p:outputLabel for="blank1" value=" " />
+							<h:outputText id="blank1" value=" "></h:outputText>
+
+							<h:outputLabel value="Estado de asientos: " />
+							<h:outputLabel value="La invitación ya fue utilizada para ingresar." style="background-color: #ff5050;" />
+						
+							<p:outputLabel for="blank2" value=" " />
+							<h:outputText id="blank2" value=" "></h:outputText>
+					  	</c:if>
+					</c:if>
+
+				</h:panelGrid>
+				
+				<br />
+				<p:button outcome="#{sessionView.previousPage.url}" value="Regresar" title="Regresar">
+					<f:param name="idInvitado" value="#{seatManagementView.eventoInvitado.invitado.id}" />
+				</p:button>
+				<br /><br />
+				<br />
+						
+			</p:fragment>
+
+			
+			<!-- El mapa de Seats.io solo se muestra si el evento tiene registrado el event key. -->
+			<c:if test="#{seatManagementView.hasSeatsMaps}">
+			
+
+			<div id="chart"></div>
+
+			<script type="text/javascript" src="https://app.seats.io/chart.js"></script>
+			<script>
+			
+            
+            var chart = new seatsio.SeatingChart({
+                divId : 'chart',
+                
+                publicKey : "#{seatManagementView.eventoInvitado.evento.llavePublica}",
+                event : "#{seatManagementView.eventoInvitado.evento.llaveEvento}",
+                
+//              publicKey : "46ea9ea2-2a4e-4f30-8f88-774f9406d2e4",
+//              event : "2a89c073-230c-4ba1-bbe0-ca2c24b96448",  //DESA
+//              event : "9690fbee-9aeb-4152-b980-6526633dce9b",    //PROD
+
+				language: "es",
+
+		        tooltipText: function (object) {
+		            if (object.status == 'booked' || object.status == 'used') {
+		            	if (object.extraData != undefined &amp;&amp; object.extraData.name != undefined) {
+		                	return "\u003Ccenter\u003E" + object.id + "\u003C\center\u003E" + object.extraData.name;
+		            	} else {
+		            		return undefined;
+		            	}
+		            } else {
+		                return undefined;
+		            }
+		        },
+		        
+				objectColor: function(object, defaultColor) {
+					// Si el estatus del objeto es 'used' se muestra en otro color.
+            		if (object.status == 'used'){
+                		return "#4B4B4B";
+            		} else {
+            		return defaultColor;
+            		}
+        		},
+
+                onObjectMouseOver : function(object) {
+                    var div = window.document
+                            .getElementById("currentHoveredSeat");
+                    div.innerHTML = object.id;
+                },
+                onObjectMouseOut : function() {
+                    var div = window.document
+                            .getElementById("currentHoveredSeat");
+                    div.innerHTML = "";
+                },
+                onObjectSelected : function(object) {
+            		indicateSelectedSeats(object);
+                },
+                onObjectDeselected : function(object) {
+					removeSelectedSeats(object);
+                }
+            }).render();
+            </script>
+            
+            
+            </c:if>
+            
+            
+		</center>
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

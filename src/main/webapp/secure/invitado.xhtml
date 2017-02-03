@@ -1,0 +1,237 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/templates/basicTemplate.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+		<script>
+			function next() {
+				console.log('next')
+				PF('wizard').next();
+			}
+
+			function back() {
+				PF('wizard').back();
+			}
+			function start() {
+				PF('statusDialog').show();
+			}
+			function stop() {
+				PF('statusDialog').hide();
+			}
+
+			function closeIFrame(){
+			     //$('#youriframeid').remove();
+			     setTimeout( closeIFrameTime,500);
+			}
+			function closeIFrameTime(){
+			     //$('#youriframeid').remove();
+			     PF('uploader').hide();
+			}
+	        function handleRequest(xhr, status, args) {
+	            stop();
+	            if (args.validationFailed || !args.success) {
+	            	document.getElementById("mainForm").reset();
+// 	                PF('growl').jq.effect("shake", {
+// 	                    times : 5
+// 	                }, 100);
+	            } else {
+// 	                PF('growl').hide();
+	            }
+	        }
+	        function start() {
+	            PF('statusDialog').show();
+	        }
+	        function stop() {
+	            PF('statusDialog').hide();
+	        }
+			
+		</script>
+	</ui:define>
+	<ui:define name="content">
+		<style>
+			.companyHeaderGrid.ui-panelgrid>*>tr,
+			.companyHeaderGrid.ui-panelgrid .ui-panelgrid-cell {
+    			border: none;
+			}
+			
+			.customMessage {
+				background-position: 0 -48px;
+				padding: 3px;
+			}
+			
+			#mainForm {
+				top:-21px;
+				position:relative;
+			}
+		</style>
+
+		<!-- Para personalizar el mensaje de error. -->
+		<!-- div>
+			<p:panel id="messagePanel" style="border:none;">
+				<h:panelGrid cellpadding="5" class="ui-message-error ui-corner-all" rendered="#{guestView.getEmailInvalid()}">
+					<p:row>
+						<span class="ui-messages-error-icon custom-message" style="padding-right:10px;"></span>
+						<p:outputLabel id="messageEmail2" value="El email [#{guestView.email}] ya está registrado."/>
+					</p:row>
+				</h:panelGrid>
+			</p:panel>
+		</div -->
+
+		<p:messages id="emailMessage" for="emailValidationMessage" showDetail="true"/>
+
+		<center>
+
+			<p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+			<p:panel id="panel" header="Registro de Invitados" style="margin-bottom:10px;">
+			<p:focus context="panel"/>
+				<p:panelGrid  cellpadding="5" width="500" styleClass="companyHeaderGrid">
+<!-- 					<p:outputLabel for="id" value="Id:" /> -->
+<!-- 						<p:inputText id="id" value="#{guestView.id}" required="true" label="Id"> -->
+<!-- 					</p:inputText> -->
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="nombre" value="Nombre:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="nombre" value="#{guestView.nombre}" required="true" label="Nombre">
+								<f:validateLength minimum="2" />
+							</p:inputText>
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column>
+							<p:outputLabel for="apPaterno" value="Apellido Paterno: " />
+						</p:column>
+						<p:column>
+							<p:inputText id="apPaterno" value="#{guestView.apPaterno}" required="true" label="apPaterno">
+								<f:validateLength minimum="2" />
+							</p:inputText>
+						</p:column>
+					</p:row>
+					
+					<p:row>
+						<p:column>
+							<p:outputLabel for="apMaterno" value="Apellido Materno: " />
+						</p:column>
+						<p:column>
+							<p:inputText id="apMaterno" value="#{guestView.apMaterno}" required="false" label="apMaterno">
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="email" value="Email: " />
+						</p:column>
+						<p:column>
+							<p:inputText id="email" value="#{guestView.email}" required="true" label="email" validatorMessage="Correo no valido."> <!-- validator="emailValidator" -->
+								<p:ajax event="blur" process="email" listener="#{guestView.validateEmail}" immediate="true" update="emailMessage growl createGuestButton"/>
+								<!-- f:ajax event="blur" update="growl,mainForm" render="@form"/ --> <!-- Valida el campo y muestra el mensaje en el growl sin permitir cambiar de campo. -->
+								<f:validateLength minimum="2" />
+					    		<f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+					    		<!-- f:validator validatorId="emailValidator"/ -->
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="tipoInvitado" value="Tipo Invitado: " />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="tipoInvitado" value="#{guestView.tipoInvitado.id}" converter="#{tipoInvitadoConverter}" style="width:198px">
+								<!--  <f:selectItem itemLabel="Selecciona Uno" itemValue="" noSelectionOption="true"/> -->
+								<f:selectItems value="#{guestView.tipoInvitados}" var="tipoInvitado" itemLabel="#{tipoInvitado.nombre}" itemValue="#{tipoInvitado.id}" />
+								<p:ajax update="empresa empresaLabel" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel id="empresaLabel" for="empresa" value="Empresa:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="empresa" value="#{guestView.empresa}"
+								required="#{guestView.isCheckProveedor()}" label="empresa" 
+								disabled="#{!guestView.isCheckProveedor()}">
+								<f:validateLength minimum="2" />
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="invitadoPor" value="Invitado Por:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="invitadoPor" value="#{guestView.invitador}"
+								required="true" label="invitadoPor">
+								<f:validateLength minimum="2" />
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<h:outputText value="Enviar correo?: " />
+						</p:column>
+						<p:column>
+							<p:selectBooleanCheckbox value="#{guestView.enviarCorreo}" />
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="evento" value="Evento:"/>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="evento"
+								value="#{sessionView.idEvento}"
+								style="width:198px" required="true">
+								<p:ajax listener="#{sessionView.setIdEvento(sessionView.idEvento)}" />
+								<!--  <f:selectItem itemLabel="Selecciona Uno" itemValue="" noSelectionOption="true"/> -->
+								<f:selectItems value="#{guestView.eventos}"
+									var="evento" itemLabel="#{evento.nombre}"
+									itemValue="#{evento.id}" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="noBoletos" value="No Boletos:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="noBoletos" value="#{guestView.noBoletos}" required="true" label="No Boletos" 
+								validatorMessage="Número de boletos incorrecto, mínimo 1, máximo 20.">
+								<f:validateLongRange minimum="1" maximum="20" />
+							</p:inputText>
+						</p:column>
+					</p:row>
+					
+					<!--  f:facet name="footer" -->
+						<p:row>
+							<p:column>
+								<p:commandButton id="createGuestButton" value="#{msg['generic.submit']}" update="growl,mainForm"
+									actionListener="#{guestView.createGuest}" action="#{guestView.resetGuest}"
+									oncomplete="handleRequest(xhr, status, args)" onclick="start();" disabled="#{guestView.getEmailInvalid()}"/>
+							</p:column>
+						</p:row>
+					<!--  /f:facet -->
+				</p:panelGrid>
+			</p:panel>
+
+		</center>
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

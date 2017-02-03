@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+	
+      
+    <context:annotation-config />
+	<context:component-scan base-package="mx.com.gapsi.eventos.dao" />
+	<context:component-scan base-package="mx.com.gapsi.eventos.facade" />
+	
+  	<!-- Configure a JPA vendor adapter -->
+	<bean id="openJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter">
+		<property name="showSql" 			value="true" />
+		<property name="generateDdl" 		value="false" />
+		<property name="databasePlatform" 	value="org.apache.openjpa.jdbc.sql.DB2Dictionary" />
+		
+		<property name="database" value="DB2" />
+	</bean>
+   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource" />
+<!--       <property name="persistenceUnitName" value="openjpa-todo" /> -->
+      <property name="packagesToScan" value="mx.liverpool.com.fest.model" />
+<!--       <property name="jpaVendorAdapter"> -->
+<!--          <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" /> -->
+<!--       </property> -->
+		<property name="jpaVendorAdapter" 	ref="openJpaVendorAdapter" />
+<!--       <property name="jpaProperties"> -->
+<!--          <props> -->
+<!--             <prop key="hibernate.hbm2ddl.auto">create-drop</prop> -->
+<!--             <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop> -->
+<!--          </props> -->
+<!--       </property> -->
+		<property name="jpaProperties">
+			<props>
+					<prop key="openjpa.Log">DefaultLevel=TRACE, Runtime=TRACE, Tool=TRACE, SQL=TRACE</prop>
+			</props>
+		</property>					
+   </bean>
+   
+ 	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.ibm.db2.jcc.DB2Driver" />
+		<property name="url" 		value="jdbc:db2://75.126.155.153:50000/SQLDB" />
+		<property name="username" 	value="user13014" />
+		<property name="password" 	value="u0JmLzkwNurd" />
+	</bean>
+	
+   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+      <property name="entityManagerFactory" ref="entityManagerFactory" />
+   </bean>
+   <tx:annotation-driven />
+ 
+   <bean id="persistenceExceptionTranslationPostProcessor"
+      class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+      
+</beans>

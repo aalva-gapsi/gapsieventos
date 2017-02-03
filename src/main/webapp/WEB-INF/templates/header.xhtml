@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:fragment xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:c="http://java.sun.com/jstl/core" xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<ui:remove>
+		<!--
+	    	Hint to editors: The menus follow the Chicago style of capitalization. Please capitalize everything but the "smaller" words. 
+	     -->
+	</ui:remove>
+	<!--  h:form id="headerForm">
+		<p:menubar>
+		<p:menuitem>
+	         <h:graphicImage library="default" value="#{resource['images/logo.png']}" height="50" />
+		</p:menuitem>
+			<p:menuitem value="#{msg['app.name']}" />
+			
+			<p:submenu label="#{msg['menu.foruser']}" icon="ui-icon-document">
+                    <p:menuitem value="#{msg['menu.evento']}" url="/secure/evento.xhtml" icon="ui-icon-arrowthickstop-1-n" />
+                    <p:menuitem value="#{msg['menu.invitado']}" url="/secure/invitado.xhtml" icon="ui-icon-folder-open" />
+                    <p:menuitem value="#{msg['menu.invitados']}" url="/secure/invitados.xhtml" icon="ui-icon-pin-s" />
+                    <p:menuitem value="#{msg['menu.confirmacion']}" url="/secure/confirmacion.xhtml" icon="ui-icon-gear" />
+                    <p:menuitem value="#{msg['logout.btn']}" actionListener="#{userLoginView.logout}" icon="ui-icon-extlink" />
+            </p:submenu>
+		</p:menubar>
+	</h:form -->
+
+	<h:form id="headerForm">
+		<p:menubar>
+		<p:menuitem>
+	         <h:graphicImage library="default" value="#{resource['images/logo.png']}" height="50" />
+		</p:menuitem>
+			<p:submenu label="#{msg['app.name']}">
+				<p:menuitem value="#{msg['logout.btn']}" actionListener="#{userLoginView.logout}" icon="ui-icon-extlink" />
+			</p:submenu>
+			
+			<p:submenu label="#{msg['menu.eventos']}" icon="ui-icon-gear">
+				<p:menuitem value="#{msg['submenu.evento']}" url="/secure/evento.xhtml" icon="ui-icon-calendar" />
+				<p:menuitem value="#{msg['submenu.eventos']}" url="/secure/eventos.xhtml" icon="ui-icon-search" />
+			</p:submenu>
+			
+			<p:submenu label="#{msg['menu.foruser']}" icon="ui-icon-gear">
+                <p:menuitem value="#{msg['menu.invitado']}" url="/secure/invitado.xhtml" icon="ui-icon-person" />
+                <p:menuitem value="#{msg['menu.invitados']}" url="/secure/invitados.xhtml" icon="ui-icon-search" />
+                <p:menuitem value="#{msg['menu.confirmacion']}" url="/secure/confirmacion.xhtml" icon="ui-icon-check" />
+            </p:submenu>
+		</p:menubar>
+	</h:form>
+
+</ui:fragment>

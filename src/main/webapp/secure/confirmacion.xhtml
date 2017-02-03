@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/templates/basicTemplate.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+		<script>
+			function next() {
+				console.log('next')
+				PF('wizard').next();
+			}
+
+			function back() {
+				PF('wizard').back();
+			}
+			function start() {
+				PF('statusDialog').show();
+			}
+			function stop() {
+				PF('statusDialog').hide();
+			}
+
+			function closeIFrame(){
+			     //$('#youriframeid').remove();
+			     setTimeout( closeIFrameTime,500);
+			}
+			function closeIFrameTime(){
+			     //$('#youriframeid').remove();
+			     PF('uploader').hide();
+			}
+			 
+		</script>
+	</ui:define>
+	<ui:define name="content">
+		<center>
+			<p:growl id="growl" showDetail="true" life="5000" />
+			<p:panel id="panel" header="Confirmación de recepción de Invitado"
+				style="margin-bottom:10px;">
+				<p:focus context="panel"/>
+				<h:panelGrid columns="2" cellpadding="5">
+
+					<p:outputLabel for="codigoQR" value="Codigo QR:" />
+					<p:inputText id="codigoQR" value="#{confirmationView.qrCode}" required="true" label="CodigoQR" tabindex="1">
+						<f:validateLength minimum="1" />
+					</p:inputText>
+
+					<f:facet name="footer">
+						<p:commandButton value="#{msg['login.submit']}" update="growl"
+							actionListener="#{confirmationView.validateInvitation}"
+							oncomplete="stop();"
+							onclick="start();" />
+					</f:facet>
+				</h:panelGrid>
+			</p:panel>
+
+		</center>
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

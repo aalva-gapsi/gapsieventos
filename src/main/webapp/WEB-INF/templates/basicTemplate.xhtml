@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title><h:outputText value="#{msg['app.name']}" /></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();" />
+
+	<ui:insert name="extraHead" />
+
+	<p:layout fullPage="true" id="page" resizeTitle="resize">
+
+		<p:layoutUnit position="center" id="content">
+			<ui:include src="header.xhtml" />
+			<br />
+			<br />
+			<h:form id="mainForm">
+				<ui:insert name="content">
+					<ui:include src="commonContent.xhtml" />
+				</ui:insert>
+			</h:form>
+		</p:layoutUnit>
+
+	</p:layout>
+
+	<p:dialog modal="true" widgetVar="statusDialog" showHeader="false" draggable="false" closable="false" resizable="false"
+		visible="false" position="center" maximizable="false" minimizable="false">
+		<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+	</p:dialog>
+</h:head>
+
+<h:body onload="PF('statusDialog').hide();">
+</h:body>
+</html>

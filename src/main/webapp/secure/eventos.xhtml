@@ -1,0 +1,182 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/templates/basicTemplate.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+	</ui:define>
+	<ui:define name="content">
+
+		<style>
+#mainDivCenter {
+	height: 200px;
+	width: 400px;
+	position: fixed;
+	top: 50%;
+	left: 40%;
+	margin-top: -100px;
+	margin-left: -200px;
+}
+.ui-icon-seat {
+            background: url("../images/seat_icon.png")  no-repeat top left !important;;
+}
+.ui-icon-mail {
+            background: url("../images/mail_icon.png")  no-repeat top left !important;;
+}
+
+.ui-column-title{
+    font-size: 14px;
+}.ui-datatable-data, .ui-column-filter{
+    font-size: 12px;
+}
+
+</style>
+		
+		<center>
+
+			
+			<div style="padding-left: 30px;padding-right: 30px;">
+				<p:growl id="growl" sticky="false" showDetail="true" life="3000" />
+				<!-- 				<p:inputText id="search" value="#{search}" style="width:100%" /> -->
+
+				
+
+				<p:dataTable id="eventoDT" var="evento"  
+					value="#{eventView.eventos}" widgetVar="eventoDT" rows="10"
+					paginator="true" editable="true" style="margin-bottom:20px"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15"
+					emptyMessage="No se encontraron eventos"
+					>
+
+					<f:facet name="header">
+						<p:outputPanel>
+							<h:outputText value="Buscar:" />
+							<p:inputText id="globalFilter" onkeyup="filter(this);"
+								style="width:250px" placeholder="Criterio" />
+						</p:outputPanel>
+						<div align="left">
+							<!-- 							<p:commandButton value="+" type="button" onclick="PF('addEvento').show();" /> -->
+						</div>
+					</f:facet>
+
+					<p:ajax event="rowEdit" listener="#{eventView.onRowEdit}"
+						update=":mainForm:growl" />
+					<p:ajax event="rowEditCancel" listener="#{eventView.onRowCancel}"
+						update=":mainForm:growl" />
+					<p:column headerText="Id" style="width: 20px" visible="false">
+						<h:outputText value="#{evento.id}" />
+					</p:column>
+
+					<p:column headerText="Nombre" style="width: 90px"
+						filterBy="#{evento.nombre}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{evento.nombre}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="nombreInput" value="#{evento.nombre}"
+									style="width:100%" required="true" requiredMessage="El campo Nombre es requerido"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column headerText="Descripción" style="width: 90px"
+						filterBy="#{evento.descripcion}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{evento.descripcion}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="descripcionInput" value="#{evento.descripcion}"
+									style="width:100%" required="true" requiredMessage="El campo Descripción es requerido"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					
+					<p:column headerText="Fecha" style="width: 90px">
+						<p:cellEditor>
+						
+							<f:facet name="filter">
+    							<p:calendar  pattern="dd/MM/yyyy">
+        							<p:ajax event="dateSelect"  oncomplete="PF('eventoDT').filter()"/>
+    							</p:calendar>
+							</f:facet>
+						
+							<f:facet name="output">
+								<h:outputText value="#{evento.fecha}" >
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+								</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="fechaInput" value="#{evento.fecha}"
+									style="width:100%" required="true" requiredMessage="El campo Fecha es requerido"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					
+					<p:column headerText="Total Asientos" style="width: 90px"
+						filterBy="#{evento.totalAsientos}" filterMatchMode="contains">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{evento.totalAsientos}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="totalAsientosInput" value="#{evento.totalAsientos}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+
+					<p:column style="width:40px" headerText="Editar">
+					    <!-- p:rowEditor /-->		
+					    <p:button outcome="evento_update.xhtml" value=""  style="height: 22px"
+								icon="fa fa-fw fa-clipboard" title="Editar" >
+								<f:param name="idEvento" value="#{evento.id}" />
+						</p:button>
+						
+					</p:column>
+
+				</p:dataTable>
+			</div>
+		</center>
+
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+			draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+
+		<script type="text/javascript">
+        function handleRequest(xhr, status, args) {
+            stop();
+            console.log(args);
+//             if (args.validationFailed || !args.loggedIn) {
+//                 PF('dlg').jq.effect("shake", {
+//                     times : 5
+//                 }, 100);
+//             } else {
+//                 PF('dlg').hide();
+//             }
+        }
+        function start() {
+            PF('statusDialog').show();
+        }
+        function stop() {
+            PF('statusDialog').hide();
+        }
+
+	    function filter(input) {
+// 		       alert(input.value);
+	       	   if(input.value.length >=3|| input.value.length ==0 ){
+	       	   	 PF('eventoDT').filter();
+	       	   }
+	          
+	     }
+		</script>
+
+	</ui:define>
+
+</ui:composition>

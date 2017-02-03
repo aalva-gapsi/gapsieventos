@@ -1,0 +1,295 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/templates/basicTemplateMultipart.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+		<script src="../scripts/primefaceslocales.js"></script>
+		<script>
+			function next() {
+				console.log('next')
+				PF('wizard').next();
+			}
+
+			function back() {
+				PF('wizard').back();
+			}
+			function start() {
+				PF('statusDialog').show();
+			}
+			function stop() {
+				PF('statusDialog').hide();
+			}
+
+			function closeIFrame(){
+			     //$('#youriframeid').remove();
+			     setTimeout( closeIFrameTime,500);
+			}
+			function closeIFrameTime(){
+			     //$('#youriframeid').remove();
+			     PF('uploader').hide();
+			}
+	        function handleRequest(xhr, status, args) {
+	            stop();
+	            if (args.validationFailed || !args.success) {
+	            	document.getElementById("mainForm").reset();
+// 	                PF('growl').jq.effect("shake", {
+// 	                    times : 5
+// 	                }, 100);
+	            } else {
+// 	                PF('growl').hide();
+	            }
+	        }
+	        function start() {
+	            PF('statusDialog').show();
+	        }
+	        function stop() {
+	            PF('statusDialog').hide();
+	        }
+
+			function loadImage(elem) {
+				var reader = new FileReader();
+				reader.onload = function(e) {
+					var tipos = /.(jpg|png|jpeg)$/;
+					if (!tipos.test(elem.files[0].type)) {
+						
+				    	PF('growlWV').renderMessage({"summary":"Error",
+			                "detail":"La imagen debe ser un archivo en formato: gif, jpeg o png.",
+			                "severity":"warn"});
+						
+						//alert("NECESITO UNA IMAGEN TIPO JPG, PNG O JPEG");
+					} else {
+						var objImagen = document
+								.getElementById("previousImage");
+						objImagen.setAttribute('src', e.target.result);
+						objImagen.setAttribute('width', 120);
+						objImagen.setAttribute('style', 'display:block;');
+						//objImagen.setAttribute('height', 120);
+					}
+				};
+				reader.readAsDataURL(elem.files[0]);
+			}
+
+		</script>
+	</ui:define>
+	<ui:define name="content">
+		<style>
+			.subtitle {
+				color:#E10098;
+				font-weight: bold;
+			}
+
+			.companyHeaderGrid.ui-panelgrid>*>tr,
+			.companyHeaderGrid.ui-panelgrid .ui-panelgrid-cell {
+    			border: none;
+			}
+			
+			.ui-fileupload-filename {
+				display: block;
+				margin: 2px;
+				color: #E10098;
+			}
+			
+			.principal_div {
+    			height: 140px;
+    			width: 120px;
+    			position: relative;
+			}
+
+			.sub_div{
+    			position: absolute;
+    			bottom: 0px;
+			}
+
+		</style>
+		
+		<center>
+
+			<p:growl id="growl" widgetVar="growlWV" sticky="true" showDetail="true" life="3000" />
+			<p:panel id="panel" header="Registro de Evento" style="margin-bottom:10px;">
+			<p:focus context="panel"/>
+				<p:panelGrid cellpadding="5" width="500" styleClass="companyHeaderGrid">
+					<!-- p:outputLabel for="id" value="Id:" />
+					<p:inputText id="id" value="#{eventView.evento.id}" required="false" label="Id" disabled="true"/ -->
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="nombre" value="Nombre:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="nombre" value="#{eventView.evento.nombre}" required="true" label="Nombre" disabled="false">
+								<f:validateLength minimum="2"/>
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="descripcion" value="Descripción:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="descripcion" value="#{eventView.evento.descripcion}" required="true" label="Descripcion" disabled="false">
+								<f:validateLength minimum="2"/>
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="fecha" value="Fecha:" />
+						</p:column>
+						<p:column>
+        					<p:calendar id="fecha" value="#{eventView.evento.fecha}" locale="es" lang="es" style="width:198px" required="true"/>
+        				</p:column>
+        			</p:row>
+
+					<p:row>
+						<p:column style="vertical-align:top;">
+							<h:outputLabel for="lugar" value="Lugar: " />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="lugar" value="#{eventView.evento.lugar}" >
+								<f:validateLength maximum="256" />
+							</p:inputTextarea>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="subjectEmail" value="Subject email:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="subjectEmail" value="#{eventView.evento.subjectEmail}">
+								<f:validateLength maximum="64" />
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="totalAsientos" value="Total Asientos:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="totalAsientos" value="#{eventView.evento.totalAsientos}" required="true" label="Total Asientos" disabled="false">
+								<f:validateLength minimum="1" maximum="4"/>
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+    						<h:outputLabel value="SEATS.IO" class="subtitle"/>
+    					</p:column>
+    					<p:column>
+    						<h:panelGroup />
+    					</p:column>
+    				</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="llaveEvento" value="Llave evento:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText id="llaveEvento" value="#{eventView.evento.llaveEvento}" style="width:385px">
+								<f:validateLength maximum="256"/>
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="llaveSecreta" value="Llave secreta:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText id="llaveSecreta" value="#{eventView.evento.llaveSecreta}" style="width:385px">
+								<f:validateLength maximum="256"/>
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="llavePublica" value="Llave pública:" />
+						</p:column>
+						<p:column colspan="2">
+							<p:inputText id="llavePublica" value="#{eventView.evento.llavePublica}" style="width:385px">
+								<f:validateLength maximum="256"/>
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+    						<h:outputLabel value="Invitación" class="subtitle"/>
+    					</p:column>
+    					<p:column>
+    						<h:outputText value=" "></h:outputText>
+    					</p:column>
+    					<p:column rowspan="4">
+							<div  class="principal_div">
+								<div class="sub_div">
+									<img alt="Imagen para Invitación" id="previousImage" src=""  style="display:none;"/>
+								</div>
+							</div>
+						</p:column>
+    				</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="imagenQRX" value="Código QR X:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="imagenQRX" value="#{eventView.evento.imagenQRX}">
+								<f:validateLength maximum="6"/>
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:outputLabel for="imagenQRY" value="Código QR Y:" />
+						</p:column>
+						<p:column>
+							<p:inputText id="imagenQRY" value="#{eventView.evento.imagenQRY}">
+								<f:validateLength maximum="6"/>
+							</p:inputText>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column  style="vertical-align:top;">
+							<p:outputLabel for="imagenFile" value="Imagen Invitación:" />
+						</p:column>
+						<p:column>
+							<p:fileUpload id="imagenFile" value="#{eventView.fileImagen}"
+								allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+								sizeLimit="3145728" fileLimit="1"
+								invalidSizeMessage="La imagen no puede ser mayor de 3 MB."
+								invalidFileMessage="La imagen debe ser un archivo en formato: gif, jpeg o png."
+								accept="image/x-png, image/gif, image/jpeg"
+								mode="simple" skinSimple="true" onchange="loadImage(this);"/>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<p:commandButton value="#{msg['generic.submit']}" update="growl,mainForm"
+								actionListener="#{eventView.createEvent}" action="#{eventView.resetEvent}" ajax="false"
+								oncomplete="handleRequest(xhr, status, args)" onclick="start();" />
+						</p:column>
+					</p:row>
+
+					<!--  p:outputLabel for="nota" value="Nota:" />
+					<p:inputTextarea id="nota" value="Todos los Visitantes se asociarian a este evento de manera automática." disabled="true"></p:inputTextarea -->
+				</p:panelGrid>
+			</p:panel>								
+
+		</center>
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>

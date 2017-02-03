@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/WEB-INF/templates/invitationTemplate.xhtml">
+	<ui:define name="extraHead">
+		<script name="jquery/jquery.js" library="primefaces"></script>
+		<script>
+			function next() {
+				console.log('next')
+				PF('wizard').next();
+			}
+
+			function back() {
+				PF('wizard').back();
+			}
+			function start() {
+				PF('statusDialog').show();
+			}
+			function stop() {
+				PF('statusDialog').hide();
+			}
+
+			function closeIFrame(){
+			     //$('#youriframeid').remove();
+			     setTimeout( closeIFrameTime,500);
+			}
+			function closeIFrameTime(){
+			     //$('#youriframeid').remove();
+			     PF('uploader').hide();
+			}
+	        function handleRequest(xhr, status, args) {
+	            stop();
+	            if (args.validationFailed || !args.success) {
+	            	document.getElementById("mainForm").reset();
+// 	                PF('growl').jq.effect("shake", {
+// 	                    times : 5
+// 	                }, 100);
+	            } else {
+// 	                PF('growl').hide();
+	            }
+	        }
+	        function start() {
+	            PF('statusDialog').show();
+	        }
+	        function stop() {
+	            PF('statusDialog').hide();
+	        }
+		</script>
+	</ui:define>
+	<ui:define name="content">
+		<style>
+			.message {
+				color:#E10098;
+				font-weight: bold;
+				font-size: 25px;
+			}
+
+			.companyHeaderGrid.ui-panelgrid>*>tr,
+			.companyHeaderGrid.ui-panelgrid .ui-panelgrid-cell {
+    			border: none;
+			}
+			
+			.buttons {
+				height:50px;
+				width: 70px;
+			}
+		</style>
+		
+		<center>
+
+			<p:growl id="growl" widgetVar="growlWV" sticky="true" showDetail="true" life="3000" />
+			<p:panel id="panel" header="Confirmación al Evento" style="margin-bottom:10px;">
+			<p:focus context="panel"/>
+				<p:panelGrid cellpadding="5" width="500" styleClass="companyHeaderGrid">
+					<!-- p:outputLabel for="id" value="Id:" />
+					<p:inputText id="id" value="#{eventView.evento.id}" required="false" label="Id" disabled="true"/ -->
+
+					<p:row>
+						<p:column>
+							<h:outputText value="¿Asistiré al evento?" styleClass="message"/>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<center>
+								<h:inputHidden id="id" value="#{confirmacionEventoView.id}"/>
+							</center>
+						</p:column>
+					</p:row>
+
+					<p:row>
+						<p:column>
+							<center>
+								<p:commandButton value="#{msg['invitation.ok']}" styleClass="buttons" update="growl,mainForm"
+									actionListener="#{confirmacionEventoView.confirmOk}" ajax="false"
+									oncomplete="handleRequest(xhr, status, args)" onclick="start();"/>
+								<p:spacer width="70"/>
+								<p:commandButton value="#{msg['invitation.no']}" styleClass="buttons" update="growl,mainForm"
+									actionListener="#{confirmacionEventoView.confirmNoOk}" ajax="false"
+									oncomplete="handleRequest(xhr, status, args)" onclick="start();" />
+						</center>
+						</p:column>
+					</p:row>
+
+					<!--  p:outputLabel for="nota" value="Nota:" />
+					<p:inputTextarea id="nota" value="Todos los Visitantes se asociarian a este evento de manera automática." disabled="true"></p:inputTextarea -->
+				</p:panelGrid>
+			</p:panel>	
+      
+            <p:panelGrid columns="3" width="500" style="border: hidden;">
+                <p:row>
+                    <p:column>
+                        <center>
+                            <h:graphicImage library="default" value="#{resource['images/patrocinadores/banamex.PNG']}" />
+                            <p:spacer width="70"/>  
+                            <h:graphicImage library="default" value="#{resource['images/patrocinadores/fashionfest-oi.PNG']}" />  
+                            <p:spacer width="70"/>
+                            <h:graphicImage library="default" value="#{resource['images/patrocinadores/huawei.PNG']}" />  
+                        </center>
+                    </p:column>
+                </p:row>      
+            </p:panelGrid>							
+
+		</center>
+		<p:dialog modal="true" widgetVar="statusDialog" header="Status" draggable="false" closable="false" resizable="false">
+			<p:graphicImage value="#{resource['images/ajax-loader.gif']}" />
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>
