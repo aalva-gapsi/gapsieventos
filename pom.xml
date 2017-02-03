@@ -395,37 +395,52 @@
 		</profile>
 	</profiles>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <configuration>
-                        <failOnMissingWebXml>false</failOnMissingWebXml>
-                        <warName>GapsiEventosAPP</warName>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>net.wasdev.wlp.maven.plugins</groupId>
-                    <artifactId>liberty-maven-plugin</artifactId>
-                    <version>1.2.1</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>net.wasdev.wlp.maven.plugins</groupId>
-                <artifactId>liberty-maven-plugin</artifactId>
-                <configuration>
-                    <configFile>src/main/wlp/server.xml</configFile>
-                    <bootstrapProperties>
-                        <appLocation>../../../../../${project.build.finalName}</appLocation>
-                    </bootstrapProperties>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<configuration>
+						<failOnMissingWebXml>false</failOnMissingWebXml>
+						<warName>EventosGapsi</warName>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>openjpa-maven-plugin</artifactId>
+				<version>1.2</version>
+				<configuration>
+					<connectionDriverName>com.ibm.db2.jcc.DB2Driver</connectionDriverName>
+					<!-- <includes>${basedir}/target/classes/**/*.class</includes> -->
+					<includes>${basedir}/target/classes/mx/com/gapsi/eventos/model/*.class</includes>
+					<!-- <includes>**/model/*.class</includes> -->
+					<addDefaultConstructor>true</addDefaultConstructor>
+					<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>enhancer</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>enhance</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.openjpa</groupId>
+						<artifactId>openjpa</artifactId>
+						<!-- set the version to be the same as the level in your runtime -->
+						<version>${openjpa.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 
     <description>Aplicación de Eventos en Bluemix</description>
     <organization>
