@@ -52,7 +52,7 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <configuration>
                         <failOnMissingWebXml>false</failOnMissingWebXml>
-                        <warName>JavaHelloWorldApp</warName>
+                        <warName>GapsiEventosAPP</warName>
                     </configuration>
                 </plugin>
                 <plugin>

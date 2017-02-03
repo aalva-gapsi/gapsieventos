@@ -1,5 +1,5 @@
 applications:
-- path: target/gapsieventos.war
+- path: target/GapsiEventosAPP.war
   memory: 256M
   instances: 1
   domain: mybluemix.net
