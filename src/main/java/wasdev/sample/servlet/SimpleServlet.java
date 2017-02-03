@@ -1,6 +1,7 @@
 package wasdev.sample.servlet;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,7 +22,11 @@ public class SimpleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
-        response.getWriter().print("Segunda modificación!");
+        Map<String,String> env = System.getenv();
+        String vcap = (String)env.get("VCAP_SERVICES");
+        response.getWriter().println("Gapsi Enventos<br/>");
+        response.getWriter().println("Variables de entorno:<br/>");
+        response.getWriter().println(vcap);
     }
 
 }
