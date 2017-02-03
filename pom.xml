@@ -403,7 +403,7 @@
 					<artifactId>maven-war-plugin</artifactId>
 					<configuration>
 						<failOnMissingWebXml>false</failOnMissingWebXml>
-						<warName>EventosGapsi</warName>
+						<warName>GapsiEventos</warName>
 					</configuration>
 				</plugin>
 			</plugins>
