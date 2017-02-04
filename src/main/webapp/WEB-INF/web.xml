@@ -113,7 +113,7 @@
 			jndiName='jdbc/mydbdatasource'> <properties user='root' password='password' 
 			url="jdbc:mysql://localhost:3306/db?relaxAutoCommit=true"/> </dataSource> -->
 		<!-- res-ref-name>jdbc/fashionfestmexico-sqldb</res-ref-name -->
-		<res-ref-name>jdbc/eventosgapsi-pgsql</res-ref-name>
+		<res-ref-name>jdbc/eventosgapsi-pgsql</res-ref-name> 
 		<res-type>javax.sql.DataSource</res-type>
 		<res-auth>Container</res-auth>
 		<res-sharing-scope>Shareable</res-sharing-scope>
