@@ -284,9 +284,11 @@
 			<version>1.5.2</version>
 		</dependency>
 
-    </dependencies>
-    
-    <repositories>
+
+
+	</dependencies>
+
+	<repositories>
 		<!-- Configure WASdev repository -->
 		<repository>
 			<id>WASdev</id>
@@ -442,16 +444,4 @@
 		</plugins>
 	</build>
 
-    <description>Aplicación de Eventos en Bluemix</description>
-    <organization>
-    		<name>Grupo de Asesores Profesionales en Servicios de Integración</name>
-    		<url>http://www.grupoasesores.com.mx</url>
-    </organization>
-    <issueManagement>
-    		<url>https://github.com/aalva-gapsi/gapsieventos/issues</url>
-    		<system>Sistema Eventos</system>
-    </issueManagement>
-    <scm>
-    		<url>https://github.com/aalva-gapsi/gapsieventos.git</url>
-    </scm>
 </project>
