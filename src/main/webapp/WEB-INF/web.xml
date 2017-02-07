@@ -53,10 +53,10 @@
 		<param-name>primefaces.THEME</param-name>
 		<param-value>liverpool</param-value>
 	</context-param>
-	<context-param>
-		<param-name>javax.faces.CONFIG_FILES</param-name>
-		<param-value>/WEB-INF/faces-config.xml</param-value>
-	</context-param>
+<!-- 	<context-param> -->
+<!-- 		<param-name>javax.faces.CONFIG_FILES</param-name> -->
+<!-- 		<param-value>/WEB-INF/faces-config.xml</param-value> -->
+<!-- 	</context-param> -->
 	<context-param>
 		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
 		<param-value>.xhtml</param-value>
