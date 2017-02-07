@@ -61,11 +61,6 @@
 		</dependency>
 
 		<!-- Testing -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
 
 		<!-- Spring -->
 		<dependency>
@@ -325,78 +320,6 @@
 		</repository>
 	</repositories>
 
-	<profiles>
-		<!-- The configuration of the development profile -->
-		<profile>
-			<id>prod</id>
-			<!-- The development profile is active by default -->
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<!-- Specifies the build.profile.id property that must be equal than 
-					the name of the directory that contains the profile specific configuration 
-					file. Because the name of the directory that contains the configuration file 
-					of the development profile is dev, we must set the value of the build.profile.id 
-					property to dev. -->
-				<build.profile.id>dev</build.profile.id>
-			</properties>
-		</profile>
-		<profile>
-			<id>dev</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<!-- Specifies the build.profile.id property that must be equal than 
-					the name of the directory that contains the profile specific configuration 
-					file. Because the name of the directory that contains the configuration file 
-					of the production profile is prod, we must set the value of the build.profile.id 
-					property to prod. -->
-				<build.profile.id>dev</build.profile.id>
-			</properties>
-			<dependencies>
-
-				<!-- This may cause issues when wildfly provides the classes -->
-				<dependency>
-					<groupId>com.sun.faces</groupId>
-					<artifactId>jsf-api</artifactId>
-					<version>${jsf.version}</version>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
-					<groupId>javax.faces</groupId>
-					<artifactId>javax.faces-api</artifactId>
-					<version>2.2</version>
-					<scope>runtime</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.sun.faces</groupId>
-					<artifactId>jsf-impl</artifactId>
-					<version>2.2.11</version>
-					<scope>runtime</scope>
-				</dependency>
-				<dependency>
-					<groupId>javax.persistence</groupId>
-					<artifactId>persistence-api</artifactId>
-					<version>1.0.2</version>
-				</dependency>
-				<dependency>
-					<groupId>javax.ws.rs</groupId>
-					<artifactId>javax.ws.rs-api</artifactId>
-					<version>2.0</version>
-				</dependency>
-
-				<dependency>
-					<groupId>com.ibm.jdbc</groupId>
-					<artifactId>db2jcc</artifactId>
-					<version>10</version>
-				</dependency>
-
-			</dependencies>
-		</profile>
-	</profiles>
-
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -416,10 +339,7 @@
 				<artifactId>openjpa-maven-plugin</artifactId>
 				<version>1.2</version>
 				<configuration>
-					<connectionDriverName>com.ibm.db2.jcc.DB2Driver</connectionDriverName>
-					<!-- <includes>${basedir}/target/classes/**/*.class</includes> -->
 					<includes>${basedir}/target/classes/mx/com/gapsi/eventos/model/*.class</includes>
-					<!-- <includes>**/model/*.class</includes> -->
 					<addDefaultConstructor>true</addDefaultConstructor>
 					<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
 				</configuration>
