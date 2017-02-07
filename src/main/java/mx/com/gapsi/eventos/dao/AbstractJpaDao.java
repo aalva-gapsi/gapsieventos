@@ -34,8 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public abstract class AbstractJpaDao<T extends Serializable> implements JpaDao<T> {
     private static final String UNIT_NAME = "openjpa-todo";
-    private static final String USER_TRANSACTION = "java:comp/UserTransaction";
-    private static final String ENTITY_MANAGER = "java:comp/env/openjpa-todo/entitymanager";
 	Logger logger = Logger.getLogger("AbstractJpaDao");
     /** The clazz. */
     private Class<T> clazz;

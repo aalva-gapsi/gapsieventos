@@ -10,7 +10,6 @@
 <!-- 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider> -->
 <!-- 		<jta-data-source>java:comp/env/jdbc/mydbdatasource</jta-data-source> -->
 		<non-jta-data-source>java:comp/env/jdbc/eventosgapsi-pgsql</non-jta-data-source>
-		<class>example.jpa.TODO</class>
 		<class>mx.com.gapsi.eventos.model.Evento</class>
 		<class>mx.com.gapsi.eventos.model.EventoInvitado</class>
 		<class>mx.com.gapsi.eventos.model.Invitado</class>
