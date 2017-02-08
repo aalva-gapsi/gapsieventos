@@ -28,9 +28,9 @@ public class MailSender {
 	/***ATENCION:esta cuenta es de Isabel (usuario de la app), NO USAR PARA PRUEBAS, 
 	los correos enviados se quedan en su bandeja de Enviados**/
 	
-	final static private String EMAIL = "ialcarazs@liverpool.com.mx";
-	final static private String USER = "ialcarazs@liverpool.com.mx";
-	final static private String PASSWORD = "akobukpfxazoccgt";
+	final static private String EMAIL = "gapsieventos@gmail.com";
+	final static private String USER = "gapsieventos@gmail.com";
+	final static private String PASSWORD = "g4p5i_123";
 
 	final static private String HOST = "smtp.gmail.com";
 	static private int PORT = 587;
