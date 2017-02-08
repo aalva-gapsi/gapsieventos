@@ -16,6 +16,12 @@ public class Encriptador {
 	private static final Logger logger = Logger.getLogger(Encriptador.class);
 	private String algoritmoCifrado;
 	private String salCifrado;
+	
+	public static void main(String[] args) {
+		Encriptador encriptador = new Encriptador();
+		String idMD5 = encriptador.encriptar(args[0]);
+		System.out.println(idMD5);
+	}
 
 	public Encriptador() {
 		algoritmoCifrado = "MD5";
